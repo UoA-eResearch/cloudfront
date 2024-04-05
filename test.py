@@ -2,7 +2,7 @@
 
 from netaddr import IPNetwork
 import requests
-from requests.exceptions import Timeout
+from requests.exceptions import Timeout, ProxyError
 from tqdm.auto import tqdm
 from tqdm.contrib.concurrent import thread_map
 import pandas as pd
@@ -17,6 +17,8 @@ def check_ip(ip):
     return {"IP": str(ip), "STATUS": "OK"}
   except Timeout:
     return {"IP": str(ip), "STATUS": "TIMEOUT"}
+  except ProxyError:
+    return {"IP": str(ip), "STATUS": "PROXY ERROR"}
 
 results = pd.DataFrame(thread_map(check_ip, network))
 results["timestamp"] = pd.Timestamp.now()
